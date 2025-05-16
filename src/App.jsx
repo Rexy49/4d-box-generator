@@ -137,6 +137,7 @@ export default function App() {
   );
 }
 
+
       <FourDBoxGenerator />
       <Footer />
     </div>
