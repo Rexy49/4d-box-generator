@@ -36,23 +36,23 @@ function FourDBoxGenerator() {
     );
     setMatrix(newMatrix);
   };
-const generateCombinations = () => {
+
+  const generateCombinations = () => {
   if (matrix.some(row => row.some(cell => cell === ""))) {
     alert("Please fill in all cells before generating combinations.");
     return;
   }
 
   const combos = [];
-  for (let r = 0; r < 4; r++) {
-    for (let a = 0; a < 4; a++) {
-      for (let b = 0; b < 4; b++) {
-        for (let c = 0; c < 4; c++) {
-          combos.push(`${matrix[r][0]}${matrix[r][1]}${matrix[r][2]}${matrix[r][3]}`);
+  for (let r1 = 0; r1 < 4; r1++) {
+    for (let r2 = 0; r2 < 4; r2++) {
+      for (let r3 = 0; r3 < 4; r3++) {
+        for (let r4 = 0; r4 < 4; r4++) {
+          combos.push(`${matrix[r1][0]}${matrix[r2][1]}${matrix[r3][2]}${matrix[r4][3]}`);
         }
       }
     }
   }
-
   setCombinations(combos);
 };
 
