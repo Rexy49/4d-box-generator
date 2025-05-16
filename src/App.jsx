@@ -136,10 +136,3 @@ export default function App() {
     </div>
   );
 }
-
-
-      <FourDBoxGenerator />
-      <Footer />
-    </div>
-  );
-}
