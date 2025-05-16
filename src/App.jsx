@@ -36,20 +36,18 @@ function FourDBoxGenerator() {
     );
     setMatrix(newMatrix);
   };
-
-  const generateCombinations = () => {
+const generateCombinations = () => {
   if (matrix.some(row => row.some(cell => cell === ""))) {
     alert("Please fill in all cells before generating combinations.");
     return;
   }
 
   const combos = [];
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
-      for (let k = 0; k < 4; k++) {
-        for (let l = 0; l < 4; l++) {
-          const num = `${matrix[0][i]}${matrix[1][j]}${matrix[2][k]}${matrix[3][l]}`;
-          combos.push(num);
+  for (let r = 0; r < 4; r++) {
+    for (let a = 0; a < 4; a++) {
+      for (let b = 0; b < 4; b++) {
+        for (let c = 0; c < 4; c++) {
+          combos.push(`${matrix[r][0]}${matrix[r][1]}${matrix[r][2]}${matrix[r][3]}`);
         }
       }
     }
@@ -57,6 +55,7 @@ function FourDBoxGenerator() {
 
   setCombinations(combos);
 };
+
 
 
   const exportToFile = () => {
