@@ -38,23 +38,26 @@ function FourDBoxGenerator() {
   };
 
   const generateCombinations = () => {
-    if (matrix.some(row => row.some(cell => cell === ""))) {
-      alert("Please fill in all cells before generating combinations.");
-      return;
-    }
+  if (matrix.some(row => row.some(cell => cell === ""))) {
+    alert("Please fill in all cells before generating combinations.");
+    return;
+  }
 
-    const combos = [];
-    for (let a = 0; a < 4; a++) {
-      for (let b = 0; b < 4; b++) {
-        for (let c = 0; c < 4; c++) {
-          for (let d = 0; d < 4; d++) {
-            combos.push(`${matrix[0][a]}${matrix[1][b]}${matrix[2][c]}${matrix[3][d]}`);
-          }
+  const combos = [];
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      for (let k = 0; k < 4; k++) {
+        for (let l = 0; l < 4; l++) {
+          const num = `${matrix[0][i]}${matrix[1][j]}${matrix[2][k]}${matrix[3][l]}`;
+          combos.push(num);
         }
       }
     }
-    setCombinations(combos);
-  };
+  }
+
+  setCombinations(combos);
+};
+
 
   const exportToFile = () => {
     const blob = new Blob([combinations.join("\n")], { type: 'text/plain' });
@@ -128,6 +131,12 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navigation />
       <Header />
+      <FourDBoxGenerator />
+      <Footer />
+    </div>
+  );
+}
+
       <FourDBoxGenerator />
       <Footer />
     </div>
