@@ -1,137 +1,93 @@
-import React, { useState } from "react";
+// src/App.jsx
+import { useState, useEffect } from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Moon, Sun, Clipboard, Download, Printer } from "lucide-react";
+import combinations from "./data/pick4_combinations.json";
 
-function Header() {
-  return (
-    <header className="bg-gradient-to-r from-indigo-700 to-blue-800 text-white p-6 shadow-md">
-      <h1 className="text-4xl font-bold text-center">4D Winning Box Forecast</h1>
-      <p className="text-center text-base mt-2">Generate 4D numbers from your box input</p>
-    </header>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="bg-gray-100 text-center text-sm py-4 border-t mt-8">
-      &copy; {new Date().getFullYear()} 4D Number Generator. All rights reserved.
-    </footer>
-  );
-}
-
-function Navigation() {
-  return (
-    <nav className="bg-white border-b shadow-sm py-2 px-6 flex justify-between">
-      <div className="font-semibold text-blue-700">4D Generator</div>
-      <div className="text-sm text-gray-600">v1.0</div>
-    </nav>
-  );
-}
-
-function FourDBoxGenerator() {
-  const [matrix, setMatrix] = useState(Array(4).fill().map(() => Array(4).fill("")));
-  const [combinations, setCombinations] = useState([]);
-
-  const handleChange = (row, col, value) => {
-    const newMatrix = matrix.map((r, i) =>
-      r.map((c, j) => (i === row && j === col ? value : c))
-    );
-    setMatrix(newMatrix);
-  };
-
-  const generateCombinations = () => {
-  if (matrix.some(row => row.some(cell => cell === ""))) {
-    alert("Please fill in all cells before generating combinations.");
-    return;
-  }
-
-  const combos = [];
-  for (let r1 = 0; r1 < 4; r1++) {
-    for (let r2 = 0; r2 < 4; r2++) {
-      for (let r3 = 0; r3 < 4; r3++) {
-        for (let r4 = 0; r4 < 4; r4++) {
-          combos.push(`${matrix[r1][0]}${matrix[r2][1]}${matrix[r3][2]}${matrix[r4][3]}`);
-        }
-      }
-    }
-  }
-  setCombinations(combos);
-};
-
-
-
-  const exportToFile = () => {
-    const blob = new Blob([combinations.join("\n")], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = '4d_combinations.txt';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  return (
-    <main className="p-6 max-w-6xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
-        4D Combination Generator
-      </h2>
-      <div className="flex flex-col md:flex-row gap-10 items-start">
-        <div className="md:w-1/2">
-          <h3 className="text-xl font-semibold mb-3 text-blue-800">🎯 Input Your 4x4 Box</h3>
-          <div className="grid grid-cols-4 gap-3 mb-4">
-            {matrix.map((row, rowIndex) =>
-              row.map((value, colIndex) => (
-                <input
-                  key={`${rowIndex}-${colIndex}`}
-                  type="text"
-                  maxLength={1}
-                  className="w-16 h-16 text-center border border-gray-400 rounded-lg text-xl"
-                  value={matrix[rowIndex][colIndex]}
-                  onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-                />
-              ))
-            )}
-          </div>
-        </div>
-
-        <div className="flex-1">
-          <h3 className="text-xl font-semibold mb-3 text-green-800">🎲 Generated Numbers</h3>
-          <div className="flex gap-4 mb-4">
-            <button
-              onClick={generateCombinations}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
-            >
-              Generate 256 Numbers
-            </button>
-            {combinations.length > 0 && (
-              <button
-                onClick={exportToFile}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
-              >
-                Export to File
-              </button>
-            )}
-          </div>
-          {combinations.length > 0 && (
-            <div className="grid grid-cols-4 gap-2 text-sm max-h-[500px] overflow-y-scroll pr-2">
-              {combinations.map((combo, idx) => (
-                <div key={idx} className="p-2 border border-gray-300 rounded text-center bg-white shadow-sm">
-                  {combo}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </main>
-  );
-}
+const categories = ["singles", "doubles", "doublePairs", "triples", "quads"];
 
 export default function App() {
+  const [search, setSearch] = useState("");
+  const [theme, setTheme] = useState("light");
+  const [copied, setCopied] = useState(null);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
+
+  const filterCombinations = (list) => {
+    return list.filter((num) => num.includes(search));
+  };
+
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(text);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  const handleDownload = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(combinations, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "pick4_combinations.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navigation />
-      <Header />
-      <FourDBoxGenerator />
-      <Footer />
-    </div>
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white p-4">
+      <header className="text-center mb-6 space-y-4">
+        <div className="flex justify-between items-center max-w-5xl mx-auto">
+          <h1 className="text-3xl font-bold">🎲 Pick 4 Combinations Chart</h1>
+          <Button variant="ghost" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? <Sun /> : <Moon />}</Button>
+        </div>
+        <Input
+          placeholder="Search for a combination..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-md mx-auto"
+        />
+        <div className="flex justify-center gap-4">
+          <Button onClick={handleDownload} variant="outline"><Download className="mr-2 w-4 h-4" />Download</Button>
+          <Button onClick={handlePrint} variant="outline"><Printer className="mr-2 w-4 h-4" />Print</Button>
+        </div>
+      </header>
+
+      <Tabs defaultValue="singles" className="max-w-5xl mx-auto">
+        <TabsList className="flex flex-wrap justify-center mb-4">
+          {categories.map((cat) => (
+            <TabsTrigger key={cat} value={cat} className="capitalize">
+              {cat}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {categories.map((cat) => (
+          <TabsContent key={cat} value={cat}>
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
+              {filterCombinations(combinations[cat]).map((num) => (
+                <Card key={num} className="text-center p-2 cursor-pointer" onClick={() => handleCopy(num)}>
+                  <CardContent className="flex flex-col items-center justify-center">
+                    <span>{num}</span>
+                    {copied === num && <span className="text-xs text-green-500">Copied!</span>}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
+    </main>
   );
-}
+} 
+
+// src/data/pick4_combinations.json
+// <-- Place the downloaded JSON file here -->
